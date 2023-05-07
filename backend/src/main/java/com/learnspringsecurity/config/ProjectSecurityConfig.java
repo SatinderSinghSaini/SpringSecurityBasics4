@@ -1,6 +1,7 @@
 package com.learnspringsecurity.config;
 
 
+import com.learnspringsecurity.filter.CsrfCookieFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -24,6 +28,8 @@ import java.util.Collections;
 public class ProjectSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+        CsrfTokenRequestAttributeHandler requestAttributeHandler = new CsrfTokenRequestAttributeHandler();
+        requestAttributeHandler.setCsrfRequestAttributeName("_csrf");
         http.cors().configurationSource(new CorsConfigurationSource() {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
@@ -35,8 +41,9 @@ public class ProjectSecurityConfig {
                         corsConfiguration.setMaxAge(3600L);
                         return corsConfiguration;
                     }
-                })
-                .and().csrf().disable()
+                }).and().csrf((csrf)->csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/notices","/register")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))//It will generate csrf token
+                .addFilterAfter(new CsrfCookieFilter(),BasicAuthenticationFilter.class)//CsrfCookieFilter will add csrf token to response header after basic authentication completed.
                 .authorizeHttpRequests()
                 .requestMatchers("/account","/balance","/cards","/loans","/user").authenticated()
                 .requestMatchers("/contact","/notices","/register").permitAll()
