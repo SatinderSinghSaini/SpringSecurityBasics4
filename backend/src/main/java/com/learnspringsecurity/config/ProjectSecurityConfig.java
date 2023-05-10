@@ -46,9 +46,10 @@ public class ProjectSecurityConfig {
                         corsConfiguration.setMaxAge(3600L);
                         return corsConfiguration;
                     }
-                }).and().csrf((csrf)->csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/notices","/register")
+                }).and()
+                .csrf((csrf)->csrf.csrfTokenRequestHandler(requestAttributeHandler).ignoringRequestMatchers("/contact","/register")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))//It will generate csrf token
-                .addFilterAfter(new CsrfCookieFilter(),BasicAuthenticationFilter.class)//CsrfCookieFilter will add csrf token to response header after basic authentication completed.
+                        .addFilterAfter(new CsrfCookieFilter(),BasicAuthenticationFilter.class)//CsrfCookieFilter will add csrf token to response header after basic authentication completed.
                 .authorizeHttpRequests()
                 .requestMatchers("/account","/balance","/cards","/loans","/user").authenticated()
                 .requestMatchers("/contact","/notices","/register").permitAll()
