@@ -1,9 +1,12 @@
 package com.learnspringsecurity.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "customer")
@@ -19,8 +22,13 @@ public class Customer {
 
     @Column(name = "mobile_number")
     private String mobileNumber;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String pwd;
     private String role;
+
+    @JsonIgnore //This field will not be sent as property of customer object to UI
+    @OneToMany(mappedBy = "customer",fetch = FetchType.EAGER)
+    private Set<Authority> authorities;
 
     @Column(name = "create_dt")
     private Date createDt;
@@ -79,5 +87,13 @@ public class Customer {
 
     public void setCreateDt(Date createDt) {
         this.createDt = createDt;
+    }
+
+    public Set<Authority> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Authority> authorities) {
+        this.authorities = authorities;
     }
 }

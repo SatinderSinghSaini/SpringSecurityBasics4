@@ -1,5 +1,6 @@
 package com.learnspringsecurity.config;
 
+import com.learnspringsecurity.model.Authority;
 import com.learnspringsecurity.model.Customer;
 import com.learnspringsecurity.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Component
 public class CustomUserNamePasswordAuthenticationProvider implements AuthenticationProvider {
@@ -32,9 +34,7 @@ public class CustomUserNamePasswordAuthenticationProvider implements Authenticat
 
         if(customers.size()>0){
             if(passwordEncoder.matches(pwd,customers.get(0).getPwd())){
-                List<GrantedAuthority> authorities = new ArrayList<>();
-                authorities.add(new SimpleGrantedAuthority(customers.get(0).getRole()));
-                return new UsernamePasswordAuthenticationToken(userName,pwd,authorities);
+                return new UsernamePasswordAuthenticationToken(userName,pwd,getCustomerAuthorities(customers.get(0).getAuthorities()));
             }else{
                 throw new BadCredentialsException("Password does not match.");
             }
@@ -42,6 +42,14 @@ public class CustomUserNamePasswordAuthenticationProvider implements Authenticat
         }else{
             throw new BadCredentialsException("User does not exist.");
         }
+    }
+
+    List<SimpleGrantedAuthority> getCustomerAuthorities(Set<Authority> authorities){
+        List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
+        for (Authority authority : authorities){
+            simpleGrantedAuthorities.add(new SimpleGrantedAuthority(authority.getName()));
+        }
+        return simpleGrantedAuthorities;
     }
 
     @Override
