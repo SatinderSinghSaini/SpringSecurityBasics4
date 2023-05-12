@@ -12,7 +12,7 @@ import java.util.Date;
 public class AccountTransactions {
     @Id
     @Column(name = "transaction_id")
-    private Long transactionId;
+    private String transactionId;
 
     @Column(name = "account_number")
     private Long accountNumber;
@@ -38,11 +38,11 @@ public class AccountTransactions {
     @Column(name = "create_dt")
     private String createDt;
 
-    public Long getTransactionId() {
+    public String getTransactionId() {
         return transactionId;
     }
 
-    public void setTransactionId(Long transactionId) {
+    public void setTransactionId(String transactionId) {
         this.transactionId = transactionId;
     }
 
