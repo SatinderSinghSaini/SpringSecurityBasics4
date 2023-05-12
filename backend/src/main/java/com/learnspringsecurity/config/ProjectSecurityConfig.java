@@ -51,10 +51,17 @@ public class ProjectSecurityConfig {
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))//It will generate csrf token
                         .addFilterAfter(new CsrfCookieFilter(),BasicAuthenticationFilter.class)//CsrfCookieFilter will add csrf token to response header after basic authentication completed.
                 .authorizeHttpRequests()
-                .requestMatchers("/account").hasAuthority("VIEWACCOUNT")
-                .requestMatchers("/balance").hasAnyAuthority("VIEWACCOUNT","VIEWBALANCE")
-                .requestMatchers("/cards").hasAuthority("VIEWCARDS")
-                .requestMatchers("/loans").hasAuthority("VIEWLOANS")
+//                .requestMatchers("/account").hasAuthority("VIEWACCOUNT")
+//                .requestMatchers("/balance").hasAnyAuthority("VIEWACCOUNT","VIEWBALANCE")
+//                .requestMatchers("/cards").hasAuthority("VIEWCARDS")
+//                .requestMatchers("/loans").hasAuthority("VIEWLOANS")
+
+                //Configuring Roles and removed authorities
+                //In Database, save roles with prefix ROLE as a spring standard. For e.g: ROLE_USER, ROLE_ADMIN
+                .requestMatchers("/account").hasRole("USER")
+                .requestMatchers("/balance").hasAnyRole("USER","ADMIN")
+                .requestMatchers("/cards").hasRole("USER")
+                .requestMatchers("/loans").hasRole("USER")
                 .requestMatchers("/user").authenticated()
                 .requestMatchers("/contact","/notices","/register").permitAll()
         .and().formLogin()

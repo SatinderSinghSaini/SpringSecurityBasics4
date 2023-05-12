@@ -175,3 +175,9 @@ INSERT INTO `authorities` (`customer_id`, `name`) VALUES (1, 'VIEWACCOUNT');
 INSERT INTO `authorities` (`customer_id`, `name`) VALUES (1, 'VIEWCARDS');
 INSERT INTO `authorities` (`customer_id`, `name`) VALUES (1, 'VIEWLOANS');
 INSERT INTO `authorities` (`customer_id`, `name`) VALUES (1, 'VIEWBALANCE');
+
+/*  Delete Authorities and Add roles in authorities table*/
+delete from springsecurity4.authorities;
+
+insert into springsecurity4.authorities (customer_id,name) values (1,'ROLE_USER');
+insert into springsecurity4.authorities (customer_id,name) values (1,'ROLE_ADMIN');
